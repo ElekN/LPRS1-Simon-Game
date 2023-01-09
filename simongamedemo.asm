@@ -25,7 +25,7 @@
 .data
 6
 0
-5 ;; Milos kaze da je 75 jedna sekunda. Stavljeno 5 kako bi se olaksalo testiranje u simulaciji
+75 ;; Milos kaze da je 75 jedna sekunda. Stavljeno 5 kako bi se olaksalo testiranje u simulaciji
 0x100
 0x140
 0x200
@@ -140,16 +140,28 @@ frame_sync_wait_1:
 	ld R0, R6                   ;; R0 <- p_frame_sync
 	jmpz frame_sync_wait_1
 
-choose_color:
-	dec R3,R3
-	jmpz select_red
-	dec R3,R3
+pera:
+	sub R0,R0,R0
+	st R0,R5
+	inc R5,R5
+	st R0,R5
+	dec R5,R5
+
+pb_x:
+	ld R0,R5 ;; p_pb_dec -> x
+	jmpz pb_y
+	dec R0,R0
 	jmpz select_green
-	dec R3,R3
+	jmp select_blue
+
+pb_y:
+	inc R5,R5
+	ld R0,R5 ;; p_pb_dec -> y
+	dec R5,R5
+	dec R0,R0
 	jmpz select_yellow
-	dec R3,R3
-	jmpz select_blue
-	jmp select_black
+	jmpnz select_red
+	jmp pera
 
 select_red:
 	sub R3,R3,R3
@@ -204,9 +216,15 @@ select_yellow:
 	jmp draw_color_loop
 select_black:
 	sub R3,R3,R3
-	inc R3,R3
-	jmp choose_color
-
+	sub R0,R0,R0
+	inc R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	sub R4,R4,R0
+	
 draw_color_loop:
 	ld R1, R4                   ;; R1 <- p_food_and_snake->x
 	jmps draw_color_end ;; Jump to end if passed tail of snake.
@@ -233,11 +251,23 @@ count_frames_begin:		    ;; Ovo je counter. Na adresu 2 staviti broj frejmova. 7
 	inc R1, R1                  ;; frame_cnt++;
 	sub R2, R2, R1              ;; frame_cnt == frames_per_heartbeat
 	jmpz count_frames_heatbeat  ;; Jump if equal.
-	st R1, R0                   ;; R1 -> frame_cnt
+	st R1, R0
+	sub R0,R0,R0
+	st R0,R5
+	inc R5,R5
+	st R0,R5
+	dec R5,R5                 ;; R1 -> frame_cnt
 	jmp frame_sync_rising_edge
 count_frames_heatbeat:
 	sub R1, R1, R1
 	st R1, R0                   ;; R1 i.e. 0 -> frame_cnt
 	inc R3,R3		    ;; VAŽNO!!! Nakon sto odbroji 75 frejma tj. nacrta jednu boju X puta, prelazi se na sledecu boju
+	sub R0,R0,R0
+	st R0,R5
+	inc R5,R5
+	st R0,R5
+	dec R5,R5
 	jmp frame_sync_rising_edge
+
+
 
