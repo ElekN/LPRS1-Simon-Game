@@ -140,12 +140,34 @@ frame_sync_wait_1:
 	ld R0, R6                   ;; R0 <- p_frame_sync
 	jmpz frame_sync_wait_1
 
-pera:
+black:
+	
 	sub R0,R0,R0
-	st R0,R5
-	inc R5,R5
-	st R0,R5
-	dec R5,R5
+	inc R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	inc R0,R0
+	sub R1,R1,R1
+
+black_loop:
+	st R1,R7
+	inc R7,R7		;; p_rgb_matrix + R0 <= 0
+	dec R0,R0
+	jmpz black_end
+	jmp black_loop
+	
+
+black_end:
+	sub R0,R0,R0
+	inc R0,R0
+	inc R0,R0
+	inc R0,R0
+	ld R7,R0
+	
 
 pb_x:
 	ld R0,R5 ;; p_pb_dec -> x
@@ -160,8 +182,9 @@ pb_y:
 	dec R5,R5
 	dec R0,R0
 	jmpz select_yellow
-	jmpnz select_red
-	jmp pera
+	dec R0,R0
+	jmps select_red
+	jmp black
 
 select_red:
 	sub R3,R3,R3
@@ -215,15 +238,7 @@ select_yellow:
 	ld R4,R0
 	jmp draw_color_loop
 select_black:
-	sub R3,R3,R3
-	sub R0,R0,R0
-	inc R0,R0
-	shl R0,R0
-	shl R0,R0
-	shl R0,R0
-	shl R0,R0
-	shl R0,R0
-	sub R4,R4,R0
+	
 	
 draw_color_loop:
 	ld R1, R4                   ;; R1 <- p_food_and_snake->x
