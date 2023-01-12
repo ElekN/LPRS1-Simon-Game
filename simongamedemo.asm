@@ -182,8 +182,9 @@ pb_y:
 	dec R5,R5
 	dec R0,R0
 	jmpz select_yellow
-	dec R0,R0
-	jmps select_red
+	inc R0,R0
+	inc R0,R0
+	jmpz select_red
 	jmp black
 
 select_red:
