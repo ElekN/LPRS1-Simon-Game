@@ -29,10 +29,12 @@
 0x100
 0x140
 0x200
-10     ;; Adresa za crvenu
-44    ;; Adresa za plavu
-78     ;; Adresa za zelenu
-112     ;; Adresa za zutu
+11     ;; Adresa za crvenu
+45    ;; Adresa za plavu
+79     ;; Adresa za zelenu
+113     ;; Adresa za zutu
+146     ;; Adresa simon boja
+0	;; STATE, simon_begin 0, simon_loop 1, player 2 
 0, 0     ;; 0x10 CRVENA
 1, 0
 1, 1
@@ -101,6 +103,15 @@
 6, 7
 7, 7
 -1, -1 ;; y je na 0x145 adresi
+2 ;; green  
+1 ;; red
+3 ;; yellow
+1 ;; red
+2 ;; green
+4 ;; blue
+-1 ;; end
+
+
 
 ;; znaci do 0x150 je sve zauzeto
 
@@ -140,6 +151,20 @@ frame_sync_wait_1:
 	ld R0, R6                   ;; R0 <- p_frame_sync
 	jmpz frame_sync_wait_1
 
+check_state:
+	sub R0,R0,R0
+	inc R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	inc R0,R0
+	inc R0,R0
+	inc R0,R0
+	ld R1,R0
+	jz simon
+	jmp player
+
+/*
 black:
 	
 	sub R0,R0,R0
@@ -167,8 +192,37 @@ black_end:
 	inc R0,R0
 	inc R0,R0
 	ld R7,R0
+*/
 	
 
+simon_begin:
+	sub R0,R0,R0
+	inc R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	inc R0,R0
+	inc R0,R0
+
+load_simon_color:
+	ld R3,R0
+	inc R0,R0
+
+choose_color:
+	dec R3,R3
+	jmpz select_red
+	dec R3,R3
+	jmpz select_green
+	dec R3,R3
+	jmpz select_yellow
+	dec R3,R3
+	jmpz select_blue
+	jmp select_black
+	
+
+player:
+	;; TODO	
+	
 pb_x:
 	ld R0,R5 ;; p_pb_dec -> x
 	jmpz pb_y
@@ -185,7 +239,7 @@ pb_y:
 	inc R0,R0
 	inc R0,R0
 	jmpz select_red
-	jmp black
+	jmp frame_sync_rising_edge
 
 select_red:
 	sub R3,R3,R3
@@ -268,22 +322,10 @@ count_frames_begin:		    ;; Ovo je counter. Na adresu 2 staviti broj frejmova. 7
 	sub R2, R2, R1              ;; frame_cnt == frames_per_heartbeat
 	jmpz count_frames_heatbeat  ;; Jump if equal.
 	st R1, R0
-	sub R0,R0,R0
-	st R0,R5
-	inc R5,R5
-	st R0,R5
-	dec R5,R5                 ;; R1 -> frame_cnt
 	jmp frame_sync_rising_edge
 count_frames_heatbeat:
 	sub R1, R1, R1
-	st R1, R0                   ;; R1 i.e. 0 -> frame_cnt
-	inc R3,R3		    ;; VAŽNO!!! Nakon sto odbroji 75 frejma tj. nacrta jednu boju X puta, prelazi se na sledecu boju
-	sub R0,R0,R0
-	st R0,R5
-	inc R5,R5
-	st R0,R5
-	dec R5,R5
+	st R1, R0                   ;; R1 i.e. 0 -> frame_cnt		
 	jmp frame_sync_rising_edge
-
 
 
