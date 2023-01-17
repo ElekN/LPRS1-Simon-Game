@@ -33,8 +33,8 @@
 82    ;; Adresa za zelenu
 116     ;; Adresa za zutu
 150     ;; Adresa simon boja
-6 ;; promenljiva adresa za simon boje
-6 ;; pocetna vrednost promenljive adrese za simon boje koja se loaduje na pocetku simon begin
+6 ;; i u for loopu 
+6 ;; broj sajmon boja
 2	;; STATE, player 0, simon_loop 1, simon_begin 2 
 0, 0     ;; 0x10 CRVENA
 1, 0
@@ -111,7 +111,7 @@
 1 ;; red
 2 ;; green
 4 ;; blue
--1 ;; end
+-1 ;;
 
 
 
@@ -154,7 +154,7 @@ frame_sync_wait_1:
 	jmpz frame_sync_wait_1
 
 check_state:
-	sub R0,R0,R0
+	sub R0,R0,R0 ;; proverava u kom se stanju nalazi program
 	inc R0,R0
 	shl R0,R0
 	shl R0,R0
@@ -202,31 +202,31 @@ black_end:
 	
 
 simon_begin:
-	st R1,R0
+	st R1,R0 ;; menja stanje u memoriji na simon_loop
 	dec R0,R0
-	ld R1,R0
-	dec R0,R0
-	st R1,R0
+	ld R1,R0  ;; loadujes broj sajmon boja u memorijsko mesto za i promenljivu
+	dec R0,R0 
+	st R1,R0	;; ubacivanje broja boja sajmona u i promenljivu
 	dec R0,R0
 	jmp simon_loop
 
 simon_loop:
-	sub R0,R0,R0
+	sub R0,R0,R0		;; namestanje R0 registra na memoriju koja sadrzi adresu sajmonovih boja
 	inc R0,R0
 	shl R0,R0
 	shl R0,R0
 	shl R0,R0
 	inc R0,R0
 	inc R0,R0
-	ld R1,R0
-	inc R0,R0
-	ld R3,R0
-	add R1,R3,R1 ;; sabrali smo pocetnu memoriju sajmona sa trenutnom
-	dec R3,R3
+	ld R1,R0		;; ucitvanje adresu sajmonovih boja u R1
+	inc R0,R0		;; povecavanje R0 na i promenljivu
+	ld R3,R0		;; loadujes i u R3 i dodajes ga na pocetnu adresu sajmonovih boja
+	add R1,R3,R1 
+	dec R3,R3		;; i--
 	st R3,R0
-	ld R3,R1
-	jmps simon_loop_end
-	jmp choose_color
+	ld R3,R1		;; ubacivanje adrese boje (pocetna + i) u R3 registar (zbog toga sto choose_color koristi R3)
+	jmps simon_loop_end		;; ako se na toj adresi nalazi negativan broj dosli smo do kraja 
+	jmp choose_color		;; ako ne skacemo na choose_color
 	
 simon_loop_end:
 	sub R0,R0,R0
