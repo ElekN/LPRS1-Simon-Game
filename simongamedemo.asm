@@ -1,4 +1,3 @@
-
 /*
 	// Ekvivalentan C kod:
 	short* p_food_and_snake = &a_food_and_snake;
@@ -29,12 +28,14 @@
 0x100
 0x140
 0x200
-11     ;; Adresa za crvenu
-45    ;; Adresa za plavu
-79     ;; Adresa za zelenu
-113     ;; Adresa za zutu
-146     ;; Adresa simon boja
-0	;; STATE, simon_begin 0, simon_loop 1, player 2 
+14     ;; Adresa za crvenu
+48    ;; Adresa za plavu
+82    ;; Adresa za zelenu
+116     ;; Adresa za zutu
+150     ;; Adresa simon boja
+6 ;; promenljiva adresa za simon boje
+6 ;; pocetna vrednost promenljive adrese za simon boje koja se loaduje na pocetku simon begin
+2	;; STATE, player 0, simon_loop 1, simon_begin 2 
 0, 0     ;; 0x10 CRVENA
 1, 0
 1, 1
@@ -103,6 +104,7 @@
 6, 7
 7, 7
 -1, -1 ;; y je na 0x145 adresi
+-1 ;; end simon uslov
 2 ;; green  
 1 ;; red
 3 ;; yellow
@@ -160,9 +162,13 @@ check_state:
 	inc R0,R0
 	inc R0,R0
 	inc R0,R0
+	inc R0,R0
+	inc R0,R0
 	ld R1,R0
-	jz simon
-	jmp player
+	jmpz player
+	dec R1,R1
+	jmpz simon_loop
+	jmp simon_begin
 
 /*
 black:
@@ -196,6 +202,15 @@ black_end:
 	
 
 simon_begin:
+	st R1,R0
+	dec R0,R0
+	ld R1,R0
+	dec R0,R0
+	st R1,R0
+	dec R0,R0
+	jmp simon_loop
+
+simon_loop:
 	sub R0,R0,R0
 	inc R0,R0
 	shl R0,R0
@@ -203,10 +218,36 @@ simon_begin:
 	shl R0,R0
 	inc R0,R0
 	inc R0,R0
-
-load_simon_color:
-	ld R3,R0
+	ld R1,R0
 	inc R0,R0
+	ld R3,R0
+	add R1,R3,R1 ;; sabrali smo pocetnu memoriju sajmona sa trenutnom
+	dec R3,R3
+	st R3,R0
+	ld R3,R1
+	jmps simon_loop_end
+	jmp choose_color
+	
+simon_loop_end:
+	sub R0,R0,R0
+	inc R0,R0
+	shl R0,R0
+	shl R0,R0
+	shl R0,R0
+	inc R0,R0
+	inc R0,R0
+	inc R0,R0
+	inc R0,R0
+	inc R0,R0
+	
+	sub R1,R1,R1
+	st R1,R0
+	jmp count_frames_begin
+
+	
+	
+	
+
 
 choose_color:
 	dec R3,R3
@@ -221,6 +262,8 @@ choose_color:
 	
 
 player:
+	jmp count_frames_begin
+
 	;; TODO	
 	
 pb_x:
@@ -327,5 +370,3 @@ count_frames_heatbeat:
 	sub R1, R1, R1
 	st R1, R0                   ;; R1 i.e. 0 -> frame_cnt		
 	jmp frame_sync_rising_edge
-
-
