@@ -1,30 +1,7 @@
-/*
-	// Ekvivalentan C kod:
-	short* p_food_and_snake = &a_food_and_snake;
-	short frames_cnt = 0;
-	short frames_per_heartbeat = 75; // 75 for synth, 1 for sim.
-	short* p_rgb_matrix = 0x100;
-	short* p_frame_sync = 0x140;
-	short* p_pb_dec = 0x200;
-	typedef struct {
-		short x;
-		short y
-	} chunk_t;
-	chunk_t a_food_and_snake[67] = {
-		{6, 2}, // Food.
-		{2, 4}, // Head.
-		{2, 3},
-		{2, 2},
-		{2, 1},
-		{1, 1}, // Tail.
-		{-1, -1},
-	};
-
-*/
 .data
 0
 0
-75 ;; Milos kaze da je 75 jedna sekunda. Stavljeno 5 kako bi se olaksalo testiranje u simulaciji
+55 ;; Milos kaze da je 75 jedna sekunda. Stavljeno 5 kako bi se olaksalo testiranje u simulaciji
 0x100
 0x140
 0x200
@@ -33,8 +10,8 @@
 82    ;; Adresa za zelenu
 116     ;; Adresa za zutu
 150     ;; Adresa simon boja
-6 ;; promenljiva adresa za simon boje
-6 ;; pocetna vrednost promenljive adrese za simon boje koja se loaduje na pocetku simon begin
+5 ;; promenljiva adresa za simon boje
+5 ;; pocetna vrednost promenljive adrese za simon boje koja se loaduje na pocetku simon begin
 2	;; STATE, player 0, simon_loop 1, 2 - simon_begin , 3 - player loop // 
 0, 0     ;; 0x10 CRVENA
 1, 0
@@ -104,8 +81,7 @@
 6, 7
 7, 7
 -1, -1 ;; y je na 0x145 adresi
--1 ;; end simon uslov
-2 ;; green  
+-1 ;; end simon uslov  
 1 ;; red
 3 ;; yellow
 1 ;; red
